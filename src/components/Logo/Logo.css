@@ -1,0 +1,19 @@
+.logo-container {
+  position: absolute;
+  top: 30px;  /* Adjust as needed */
+  left: 20px; /* Moves the logo to the left */
+}
+
+.Tilt {
+  background: linear-gradient(89deg, #FF5EDF 0%, #04C8DE 100%);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.Tilt-inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 120px;
+  width: 120px;
+}

@@ -2,9 +2,18 @@
   text-align: center;
 }
 
+.center{
+   display: flex;
+   justify-content: center;
+   flex-wrap: wrap;
+}   
+
 .App-logo {
   height: 40vmin;
+  max-width: 100%; /* Ensures responsiveness */
   pointer-events: none;
+  display: block;
+  margin: 20px auto;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -22,6 +31,7 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  padding-top: 50px; /* Prevent overlap */
 }
 
 .App-link {
@@ -34,5 +44,29 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+.particles{
+   position: absolute;
+   top: 0;
+   right: 0;
+   bottom: 0;
+   left: 0;
+   z-index: -1;
+}
+
+@media (max-width: 768px) {
+  .App-header {
+    font-size: calc(8px + 2vmin);
+    padding-top: 80px; /* More space for smaller screens */
+  }
+  
+  .particles {
+    opacity: 0.5; /* Hide particles on small screens for performance */
+  }
+
+  .App-logo {
+    height: 30vmin; /* Adjust size for smaller screens */
   }
 }

@@ -1,0 +1,88 @@
+.form {
+  width: 90%;
+  max-width: 800px;
+  margin: 50px auto;
+  text-align: center;
+}
+
+.pattern {
+  background-size: 40px 60px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .form {
+    width: 100%;
+    padding: 0 20px;
+  }
+  
+  .center {
+    flex-direction: column;
+  }
+  
+  .center input {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .center button {
+    width: 100%;
+  } 
+}
+
+.detect-form {
+  background: linear-gradient(135deg, #ff69b4, #d291ff, #48c6ef);
+  background-size: 400% 400%;
+  animation: gradientShift 10s ease infinite;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  transition: box-shadow 0.3s ease;
+  margin: 20px auto;
+  width: 90%;
+  max-width: 800px;
+  text-align: center;
+}
+.detect-form:hover {
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.detect-form input {
+  border-radius: 5px;
+  border: none;
+  background-color: white;
+  color: black;
+  padding: 12px;
+  margin-bottom: 20px; /* 🔥 Adds spacing below the input */
+  width: 70%;
+  font-size: 1.1rem;
+}
+
+.detect-form button {
+  border-radius: 5px;
+  border: none;
+  background-color: #ff69b4; /* 💖 Bright pink */
+  color: white;
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.detect-form button:hover {
+  background-color: #ff1493; /* Deeper pink on hover */
+}
