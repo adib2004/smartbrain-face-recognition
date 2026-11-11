@@ -1,10 +1,332 @@
-.bounding-box 
-{
-  
-  position:absolute;
-  box-shadow:0 0 0 3px #13b5ea;  
-  display:flex; 
-  justify-content:center; 
-  cursor:pointer;
+.face-recognition {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+  padding: 0 1.25rem 3rem;
+  color: #24233a;
+}
 
-} 
+.face-image {
+  position: relative;
+  display: block;
+  width: min(100%, 720px);
+  border-radius: 1rem;
+  box-shadow: 0 16px 40px rgba(39, 31, 72, 0.2);
+}
+
+.face-image img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border-radius: 1rem;
+}
+
+.face-overlay {
+  position: absolute;
+  z-index: 1;
+  display: block;
+  padding: 0;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  box-shadow: 0 0 0 3px #13b5ea;
+  cursor: pointer;
+  color: inherit;
+}
+
+.face-overlay:hover,
+.face-overlay:focus-visible,
+.face-overlay.is-selected {
+  z-index: 2;
+  box-shadow: 0 0 0 4px #078bb7, 0 0 0 7px rgba(19, 181, 234, 0.28);
+  outline: none;
+}
+
+.face-box-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0.28rem 0.55rem;
+  border-radius: 0 0 0.5rem 0;
+  background: #078bb7;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.expression-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border: 1px solid rgba(89, 73, 157, 0.1);
+  border-radius: 999px;
+  background: #f3efff;
+  color: #4a397d;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.face-overlay-expression {
+  position: absolute;
+  top: calc(100% + 0.65rem);
+  left: 50%;
+  width: max-content;
+  max-width: min(14rem, 75vw);
+  padding: 0.4rem 0.75rem;
+  box-shadow: 0 4px 14px rgba(32, 25, 57, 0.2);
+  transform: translateX(-50%);
+}
+
+.face-results {
+  width: min(100%, 1080px);
+}
+
+.face-results-heading {
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+
+.face-results-eyebrow {
+  color: #62529b;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+.face-results-heading h2 {
+  margin: 0.3rem 0;
+  color: #25213a;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+}
+
+.face-results-heading p {
+  margin: 0;
+  color: #656276;
+  font-size: 0.9rem;
+}
+
+.face-analysis-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  align-items: start;
+  gap: 1rem;
+}
+
+.face-analysis {
+  min-width: 0;
+  padding: 1.1rem;
+  border: 1px solid rgba(80, 66, 131, 0.1);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 8px 24px rgba(38, 29, 68, 0.12);
+  color: #28263b;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.face-analysis.is-selected {
+  border-color: #13a5d5;
+  box-shadow: 0 0 0 3px rgba(19, 181, 234, 0.22), 0 10px 28px rgba(38, 29, 68, 0.16);
+  transform: translateY(-2px);
+}
+
+.face-analysis-select {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  width: 100%;
+  margin: 0 0 0.8rem;
+  padding: 0 0 0.85rem;
+  border: 0;
+  border-bottom: 1px solid #eeecf4;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.face-analysis-select:focus-visible {
+  border-radius: 0.35rem;
+  outline: 2px solid #13a5d5;
+  outline-offset: 3px;
+}
+
+.face-card-title {
+  color: #5a4a91;
+  font-size: 0.73rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.face-card-expression {
+  padding: 0.38rem 0.65rem;
+  background: #f1edfc;
+}
+
+.face-analysis-section + .face-analysis-section {
+  margin-top: 0.9rem;
+}
+
+.face-analysis-section h3 {
+  margin: 0 0 0.45rem;
+  color: #504778;
+  font-size: 0.85rem;
+  font-weight: 750;
+}
+
+.face-stat-list {
+  display: grid;
+  gap: 0.38rem;
+}
+
+.face-stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  min-height: 1.8rem;
+}
+
+.face-stat-label {
+  color: #4b4959;
+  font-size: 0.84rem;
+}
+
+.likelihood-badge {
+  padding: 0.24rem 0.55rem;
+  border-radius: 999px;
+  background: #f1f0f5;
+  color: #575467;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.likelihood-very-likely,
+.likelihood-likely {
+  background: #e7f7f1;
+  color: #207552;
+}
+
+.likelihood-possible {
+  background: #fff4dc;
+  color: #8a6417;
+}
+
+.likelihood-unlikely,
+.likelihood-very-unlikely {
+  background: #f1f0f5;
+  color: #625e70;
+}
+
+.orientation-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.orientation-stat {
+  display: grid;
+  gap: 0.18rem;
+  padding: 0.5rem 0.4rem;
+  border-radius: 0.6rem;
+  background: #f7f5fc;
+  text-align: center;
+}
+
+.orientation-stat span {
+  color: #777386;
+  font-size: 0.68rem;
+}
+
+.orientation-stat strong {
+  color: #353149;
+  font-size: 0.82rem;
+}
+
+.face-landmarks-details {
+  margin-top: 0.85rem;
+  border-top: 1px solid #eeecf4;
+  color: #51477b;
+  font-size: 0.82rem;
+}
+
+.face-landmarks-details summary {
+  padding-top: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.face-landmark-list {
+  display: grid;
+  gap: 0.35rem;
+  max-height: 10rem;
+  overflow: auto;
+  margin: 0.65rem 0 0;
+  padding: 0 0.2rem 0 1.1rem;
+  color: #575467;
+  text-transform: capitalize;
+}
+
+.face-landmark-list li {
+  padding-left: 0.15rem;
+}
+
+.face-landmark-list li span:last-child {
+  float: right;
+  margin-left: 0.5rem;
+  color: #777386;
+  font-variant-numeric: tabular-nums;
+  text-transform: none;
+}
+
+.face-landmarks-empty {
+  margin: 0.55rem 0 0;
+  color: #777386;
+}
+
+@media (max-width: 600px) {
+  .face-recognition {
+    gap: 1.4rem;
+    padding-right: 0.8rem;
+    padding-left: 0.8rem;
+  }
+
+  .face-image,
+  .face-image img {
+    border-radius: 0.7rem;
+  }
+
+  .face-overlay {
+    box-shadow: 0 0 0 2px #13b5ea;
+  }
+
+  .face-overlay:hover,
+  .face-overlay:focus-visible,
+  .face-overlay.is-selected {
+    box-shadow: 0 0 0 3px #078bb7, 0 0 0 5px rgba(19, 181, 234, 0.25);
+  }
+
+  .face-overlay-expression {
+    top: calc(100% + 0.45rem);
+    padding: 0.32rem 0.55rem;
+    font-size: 0.7rem;
+  }
+
+  .face-analysis {
+    padding: 0.9rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .face-analysis {
+    transition: none;
+  }
+}

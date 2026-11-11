@@ -7,12 +7,16 @@ import Logo from './components/Logo/Logo';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
+import API_BASE_URL from './api';
+import { validateImageUrl } from './imageUrl';
 import './App.css';
 
 const initialState= {
         input: '',
         imageUrl: '',
-        box: {},
+        faces: [],
+        faceDetectionMessage: '',
+        isDetecting: false,
         route: 'signin',
         isSignedIn:false, 
         user:{
@@ -20,6 +24,7 @@ const initialState= {
               id:'',
               name:'', 
               email:'', 
+              token:'',
               entries:0, 
               joined:''
           }
@@ -29,6 +34,9 @@ class App extends Component {
   constructor() {
     super();
     this.state = initialState;
+    this.detectRequestId = 0;
+    this.activeDetectionRequestId = null;
+    this.userSessionId = 0;
     }
    
 
@@ -37,6 +45,7 @@ class App extends Component {
             id:data.id,
             name:data.name, 
             email:data.email, 
+            token:data.token,
             entries:data.entries, 
             joined:data.joined
               
@@ -45,20 +54,21 @@ class App extends Component {
    }
 
 
-calculateFaceLocation = (data) => {
-    if (!data || !data.outputs || !data.outputs[0] || !data.outputs[0].data || !data.outputs[0].data.regions) {
+calculateFaceLocation = (face) => {
+    const vertices = face?.vertices;
+    if (!Array.isArray(vertices) || vertices.length < 2) {
       return null;
     }
-    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
-    const image = document.getElementById('inputimage');
-    if (!image) return null;
-    const width = Number(image.width);
-    const height = Number(image.height);
+
+    const xCoordinates = vertices.map((vertex) => vertex?.x ?? 0);
+    const yCoordinates = vertices.map((vertex) => vertex?.y ?? 0);
+    if (![...xCoordinates, ...yCoordinates].every(Number.isFinite)) return null;
+
     return {
-      left_col: clarifaiFace.left_col * width,
-      top_row: clarifaiFace.top_row * height,
-      right_col: clarifaiFace.right_col * width,
-      bottom_row: clarifaiFace.bottom_row * height
+      left_col: Math.min(...xCoordinates),
+      top_row: Math.min(...yCoordinates),
+      right_col: Math.max(...xCoordinates),
+      bottom_row: Math.max(...yCoordinates)
     };
   }                                  
 
@@ -71,56 +81,131 @@ calculateFaceLocation = (data) => {
     this.setState({ input: event.target.value });
   };
 
-  onButtonSubmit = () => {
-    const IMAGE_URL = this.state.input;
-    this.setState({ imageUrl: IMAGE_URL, box: {} });
-    if (!IMAGE_URL) return;
-    fetch('http://localhost:3001/clarifai', {
-      method: 'POST',  
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ input: IMAGE_URL })
-    })
-     .then((response) => {
-   if (response) {
-     fetch('http://localhost:3000/image', {
-       method: 'put',
-       headers: { 'Content-Type': 'application/json' },
-       body: JSON.stringify({ id: this.state.user.id })
-     })
-     .then(res => res.json())
-     .then(count => {
-       this.setState(Object.assign(this.state.user, { entries: count }));
-     }) 
-     .catch(console.log)
-   }
+  onImageLoadError = (failedImageUrl) => {
+    if (failedImageUrl !== this.state.imageUrl) return;
 
-   return response.json(); // 
-})
+    this.detectRequestId += 1;
+    this.setState({
+      imageUrl: '',
+      faces: [],
+      faceDetectionMessage: 'Unable to load this image. Please check the image URL and try again.',
+      isDetecting: this.activeDetectionRequestId !== null
+    });
+  };
 
-      .then((result) => {
-        const box = this.calculateFaceLocation(result);
-        if (box) {
-          this.setState({ box });
-          console.log('Bounding box:', box);
-        } else {
-          this.setState({ box: {} });
-          console.log('No face detected.');
+  onButtonSubmit = async () => {
+    if (this.detectRequestInProgress) return;
+
+    const { url: imageUrl, error: validationError } = validateImageUrl(this.state.input);
+    if (validationError) {
+      this.setState({
+        imageUrl: '',
+        faces: [],
+        faceDetectionMessage: validationError
+      });
+      return;
+    }
+
+    const requestId = ++this.detectRequestId;
+    const requestSessionId = this.userSessionId;
+    const { id: requestUserId, token: requestUserToken } = this.state.user;
+    this.activeDetectionRequestId = requestId;
+    this.detectRequestInProgress = true;
+    this.setState({
+      imageUrl,
+      faces: [],
+      faceDetectionMessage: '',
+      isDetecting: true
+    });
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/detect-face`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.state.user.token}`
+        },
+        body: JSON.stringify({ input: imageUrl })
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || 'Face detection failed. Please try again.');
+      }
+
+      const requestIsCurrent = requestId === this.detectRequestId;
+      const faces = requestIsCurrent
+        ? (Array.isArray(result.faces) ? result.faces : []).map((face) => {
+            const likelihoods = face?.likelihoods && typeof face.likelihoods === 'object'
+              ? face.likelihoods
+              : {};
+            const box = this.calculateFaceLocation(face);
+            if (!box) return null;
+
+            return {
+              ...face,
+              box,
+              likelihoods: {
+                ...likelihoods,
+                joyLikelihood: likelihoods.joyLikelihood ?? face?.joyLikelihood ?? 'UNKNOWN',
+                sorrowLikelihood: likelihoods.sorrowLikelihood ?? face?.sorrowLikelihood ?? 'UNKNOWN',
+                angerLikelihood: likelihoods.angerLikelihood ?? face?.angerLikelihood ?? 'UNKNOWN',
+                surpriseLikelihood: likelihoods.surpriseLikelihood ?? face?.surpriseLikelihood ?? 'UNKNOWN'
+              }
+            };
+          }).filter(Boolean)
+        : null;
+      this.setState((state) => {
+        const updates = {};
+        if (
+          this.userSessionId === requestSessionId &&
+          state.user.id === requestUserId &&
+          state.user.token === requestUserToken &&
+          Number.isInteger(result.entries)
+        ) {
+          updates.user = { ...state.user, entries: result.entries };
         }
-      })
-      .catch((error) => console.log('error', error));
+        if (requestId === this.detectRequestId) {
+          updates.faces = faces || [];
+          updates.faceDetectionMessage = faces?.length === 0
+            ? 'No faces detected in this image.'
+            : '';
+        }
+        return Object.keys(updates).length > 0 ? updates : null;
+      });
+    } catch (error) {
+      if (requestId === this.detectRequestId) {
+        this.setState({
+          faceDetectionMessage: error instanceof TypeError
+            ? 'Unable to reach the face detection service. Please try again.'
+            : error.message || 'Face detection failed. Please try again.'
+        });
+      }
+    } finally {
+      if (this.activeDetectionRequestId === requestId) {
+        this.activeDetectionRequestId = null;
+        this.detectRequestInProgress = false;
+        this.setState({ isDetecting: false });
+      }
+    }
   }; 
 
   onRouteChange =(route) => { 
     if(route==='signout') {
-        this.setState(initialState); 
+        this.userSessionId += 1;
+        this.detectRequestId += 1;
+        this.activeDetectionRequestId = null;
+        this.detectRequestInProgress = false;
+        this.setState(initialState);
+        return;
     } else if(route==='home'){ 
        this.setState({isSignedIn:true,route:route}); 
+       return;
     }
     this.setState({route:route});  
   }
 
   render() { 
-    const { isSignedIn,imageUrl,route,box }=this.state;
+    const { isSignedIn,imageUrl,route,faces,faceDetectionMessage,isDetecting }=this.state;
     return (
       <div className="App">
         <div className="particles">
@@ -135,9 +220,15 @@ calculateFaceLocation = (data) => {
               <ImageLinkForm 
                     onInputChange={this.onInputChange} 
                     onButtonSubmit={this.onButtonSubmit} 
+                    isLoading={isDetecting}
                 />
               
-                <FaceRecognition imageUrl={imageUrl} box={box} /> 
+                <FaceRecognition
+                  imageUrl={imageUrl}
+                  faces={faces}
+                  onImageError={this.onImageLoadError}
+                />
+                {faceDetectionMessage && <p role="alert">{faceDetectionMessage}</p>}
             </div> 
            : (
 

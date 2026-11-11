@@ -3,6 +3,7 @@
   max-width: 800px;
   margin: 50px auto;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .pattern {
@@ -15,24 +16,14 @@
 @media (max-width: 768px) {
   .form {
     width: 100%;
-    padding: 0 20px;
+    padding: 0 16px;
   }
-  
-  .center {
-    flex-direction: column;
-  }
-  
-  .center input {
-    width: 100%;
-    margin-bottom: 10px;
-  }
-  
-  .center button {
-    width: 100%;
-  } 
 }
 
 .detect-form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   background: linear-gradient(135deg, #ff69b4, #d291ff, #48c6ef);
   background-size: 400% 400%;
   animation: gradientShift 10s ease infinite;
@@ -44,6 +35,7 @@
   width: 90%;
   max-width: 800px;
   text-align: center;
+  box-sizing: border-box;
 }
 .detect-form:hover {
   box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
@@ -62,17 +54,21 @@
 }
 
 .detect-form input {
+  flex: 1 1 auto;
+  min-width: 0;
   border-radius: 5px;
   border: none;
   background-color: white;
   color: black;
   padding: 12px;
-  margin-bottom: 20px; /* 🔥 Adds spacing below the input */
-  width: 70%;
+  margin: 0;
+  width: auto;
   font-size: 1.1rem;
+  box-sizing: border-box;
 }
 
 .detect-form button {
+  flex: 0 0 auto;
   border-radius: 5px;
   border: none;
   background-color: #ff69b4; /* 💖 Bright pink */
@@ -81,6 +77,22 @@
   font-size: 1.1rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .detect-form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    width: 100%;
+    padding: 1.25rem;
+  }
+
+  .detect-form input,
+  .detect-form button {
+    width: 100%;
+  }
 }
 
 .detect-form button:hover {

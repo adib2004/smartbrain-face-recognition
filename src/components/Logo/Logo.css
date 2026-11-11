@@ -17,3 +17,13 @@
   height: 120px;
   width: 120px;
 }
+
+@media (max-width: 768px) {
+  .logo-container {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: max-content;
+    margin: 1rem auto;
+  }
+}

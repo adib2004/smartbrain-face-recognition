@@ -1,7 +1,7 @@
 import React from 'react';
 import './ImageLinkForm.css';
 
-const ImageLinkForm = ({ onInputChange, onButtonSubmit }) => {
+const ImageLinkForm = ({ onInputChange, onButtonSubmit, isLoading = false }) => {
   return (
     <div className='form'>
       <p className='f4'>
@@ -17,8 +17,9 @@ const ImageLinkForm = ({ onInputChange, onButtonSubmit }) => {
           <button
             className='w-30 grow f5 link ph3 pv2 dib white bg-light-purple'
             onClick={onButtonSubmit}
+            disabled={isLoading}
           >
-            Detect
+            {isLoading ? 'Detecting...' : 'Detect'}
           </button>
         </div>
       </div>

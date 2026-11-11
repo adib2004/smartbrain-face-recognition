@@ -7,6 +7,11 @@
 
 # testing
 /coverage
+/src/backend/node_modules/
+/src/backend/.env
+/src/backend/.env.*
+/src/backend/users.json
+/src/backend/users.json.*.tmp
 
 # production
 /build
@@ -21,3 +26,9 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+
+# Environment variables
+.env
+.env.*
+!.env.example
