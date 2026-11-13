@@ -43,17 +43,27 @@ The application-level 900-request limit is not a billing guarantee: other client
 ### Deployment
 
 
+
+
 SmartBrain is deployed using cloud-based services. The React.js frontend is hosted on Vercel, while the Node.js and Express.js backend is deployed on Render. The application uses a PostgreSQL database hosted on Supabase to manage user accounts and face-detection usage records. For facial analysis, it integrates the Google Cloud Vision API, which processes submitted images using its FACE_DETECTION feature.
+
+
 
 Live Application
 Live Demo:  https://smartbrain-face-recognition.vercel.app/
+
+
 GitHub Repository: https://github.com/adib2004/smartbrain-face-recognition
 
 Deployment Architecture
+
+
 The application follows a three-tier architecture:
 1.	Frontend (Vercel): Hosts the React.js application and communicates with the backend through HTTPS API requests.
 2.	Backend (Render): Handles user registration, authentication, face detection requests, API validation, and monthly usage tracking.
 3.	Database (Supabase): Provides managed PostgreSQL storage for user accounts and monthly face-detection usage records.
+
+
 
 The Google Cloud Vision API processes submitted image URLs using its FACE_DETECTION feature to identify faces and return facial analysis results.
 Environment Configuration
@@ -63,14 +73,31 @@ The deployed application uses environment variables to keep sensitive credential
 •	Render: DATABASE_URL, GOOGLE_VISION_API_KEY, and AUTH_TOKEN_SECRET are configured as backend environment variables.
 Sensitive credentials are not stored in the frontend source code or committed to the GitHub repository. 
 
+
+
 <img width="1000" height="620" alt="image" src="https://github.com/user-attachments/assets/806b934e-63ef-4bdf-93c6-112d51fb1c82" />  
 
+
+
+
+
 <img width="940" height="504" alt="image" src="https://github.com/user-attachments/assets/ef00e034-b157-4bcd-bd3c-8a8eb0f45d79" />
+
+
+
+
+
 
 <img width="1003" height="578" alt="image" src="https://github.com/user-attachments/assets/67665a90-e92d-41c0-a3e7-b0c573f33871" />
 
 
+
+
+
+
 <img width="1010" height="633" alt="image" src="https://github.com/user-attachments/assets/b25c539d-39bc-4cc7-8925-ffeb808f1df7" />
+
+
 
 
 ### `npm test`
