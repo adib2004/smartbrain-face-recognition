@@ -81,6 +81,26 @@ Sensitive credentials are not stored in the frontend source code or committed to
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <img width="940" height="504" alt="image" src="https://github.com/user-attachments/assets/ef00e034-b157-4bcd-bd3c-8a8eb0f45d79" />
 
 
@@ -88,7 +108,43 @@ Sensitive credentials are not stored in the frontend source code or committed to
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <img width="1003" height="578" alt="image" src="https://github.com/user-attachments/assets/67665a90-e92d-41c0-a3e7-b0c573f33871" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
